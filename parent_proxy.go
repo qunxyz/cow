@@ -181,6 +181,20 @@ func (pp *latencyParentPool) empty() bool {
 
 func (pp *latencyParentPool) add(parent ParentProxy) {
 	pp.parent = append(pp.parent, ParentWithLatency{parent, 0})
+	pp.sort()
+}
+
+func (pp *latencyParentPool) sort() {
+	lp := pp.parent
+	nproxy := len(lp)
+	for i := 0; i < nproxy-1; i++ {
+		if lp[i].latency > lp[i+1].latency {
+			tmp := lp[i]
+			lp[i] = lp[i+1]
+			lp[i+1] = tmp
+			pp.sort()
+		}
+	}
 }
 
 // Sort interface.
