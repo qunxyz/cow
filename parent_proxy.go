@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	ss "github.com/shadowsocks/shadowsocks-go/shadowsocks"
+	ss "github.com/qunxyz/shadowsocks-go/shadowsocks"
 	"hash/crc32"
 	"io"
 	"math/rand"
@@ -367,7 +367,7 @@ type shadowsocksParent struct {
 	server string
 	method string // method and passwd are for upgrade config
 	passwd string
-	cipher *ss.Cipher
+	cipher ss.Cipher
 }
 
 type shadowsocksConn struct {
@@ -410,7 +410,7 @@ func (sp *shadowsocksParent) initCipher(method, passwd string) {
 }
 
 func (sp *shadowsocksParent) connect(url *URL) (net.Conn, error) {
-	c, err := ss.Dial(url.HostPort, sp.server, sp.cipher.Copy())
+	c, err := ss.Dial(url.HostPort, sp.server, sp.cipher)
 	if err != nil {
 		errl.Printf("can't connect to shadowsocks parent %s for %s: %v\n",
 			sp.server, url.HostPort, err)
@@ -425,7 +425,7 @@ type cowParent struct {
 	server string
 	method string
 	passwd string
-	cipher *ss.Cipher
+	cipher ss.Cipher
 }
 
 type cowConn struct {
@@ -466,7 +466,7 @@ func (cp *cowParent) connect(url *URL) (net.Conn, error) {
 	}
 	debug.Printf("connected to: %s via cow parent: %s\n",
 		url.HostPort, cp.server)
-	ssconn := ss.NewConn(c, cp.cipher.Copy())
+	ssconn := ss.NewConn(c, cp.cipher)
 	return cowConn{ssconn, cp}, nil
 }
 

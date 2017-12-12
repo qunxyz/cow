@@ -1,3 +1,7 @@
 *.sublime*
 cow-proxy
 bin
+.idea
+*.sh
+cow
+*.iml

@@ -12,7 +12,7 @@ import (
 
 	"github.com/cyfdecyf/bufio"
 	"github.com/cyfdecyf/leakybuf"
-	ss "github.com/shadowsocks/shadowsocks-go/shadowsocks"
+	ss "github.com/qunxyz/shadowsocks-go/shadowsocks"
 )
 
 // As I'm using ReadSlice to read line, it's possible to get
@@ -27,7 +27,8 @@ import (
 // 4000 as an absolute minimum".
 // In practice, there are sites using cookies larger than 4096 bytes,
 // e.g. www.fitbit.com. So set http buffer size to 8192 to be safe.
-const httpBufSize = 8192
+//const httpBufSize = 8192
+const httpBufSize = 64 * 1024
 
 // Hold at most 4MB memory as buffer for parsing http request/response and
 // holding post data.
@@ -193,7 +194,7 @@ type cowProxy struct {
 	addr   string
 	method string
 	passwd string
-	cipher *ss.Cipher
+	cipher ss.Cipher
 }
 
 func newCowProxy(method, passwd, addr string) *cowProxy {
@@ -247,7 +248,7 @@ func (cp *cowProxy) Serve(wg *sync.WaitGroup, quit <-chan struct{}) {
 			debug.Println("exiting cow listner")
 			break
 		}
-		ssConn := ss.NewConn(conn, cp.cipher.Copy())
+		ssConn := ss.NewConn(conn, cp.cipher)
 		c := newClientConn(ssConn, cp)
 		go c.serve()
 	}
@@ -977,7 +978,8 @@ func (sv *serverConn) mayBeClosed() bool {
 
 // Use smaller buffer for connection method as the buffer will be hold for a
 // very long time.
-const connectBufSize = 4096
+//const connectBufSize = 4096
+const connectBufSize = 64 * 1024
 
 // Hold at most 2M memory for connection buffer. This can support 256
 // concurrent connect method.
