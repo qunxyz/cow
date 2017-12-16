@@ -28,7 +28,7 @@ import (
 // In practice, there are sites using cookies larger than 4096 bytes,
 // e.g. www.fitbit.com. So set http buffer size to 8192 to be safe.
 //const httpBufSize = 8192
-const httpBufSize = 64 * 1024
+const httpBufSize = 16 * 8192
 
 // Hold at most 4MB memory as buffer for parsing http request/response and
 // holding post data.
