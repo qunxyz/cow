@@ -260,15 +260,7 @@ func copyN(dst io.Writer, src *bufio.Reader, n, rdSize int) (err error) {
 		nr := len(b)
 		n -= nr
 		if nr > 0 {
-			nw, ew := dst.Write(b)
-			if ew != nil {
-				err = ew
-				break
-			}
-			if nr != nw {
-				err = io.ErrShortWrite
-				break
-			}
+			dst.Write(b)
 		}
 		if er == io.EOF {
 			break
